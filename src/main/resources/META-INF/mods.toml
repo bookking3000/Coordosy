@@ -1,22 +1,10 @@
-modLoader="javafml" #mandatory
-loaderVersion="[31,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
-[[mods]] #mandatory
-modId="coordosy" #mandatory
-version="${file.jarVersion}" #mandatory
-displayName="Coordosy" #mandatory
+modLoader="javafml"
+loaderVersion="[31,)"
+[[mods]]
+modId="coordosy"
+version="${file.jarVersion}"
+displayName="Coordosy"
 issueTrackerURL="github.com/bookking3000/Coordosy/issues"
 description='''
 A Minecraft Mod indicating the Direction to another Player
 '''
-[[dependencies.coordosy]] #optional
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="[31,)" #mandatory
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.coordosy]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.15.2]"
-    ordering="NONE"
-    side="BOTH"
