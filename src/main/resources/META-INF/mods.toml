@@ -1,0 +1,12 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+license="Mojang origin"
+[[mods]]
+modId="coordosy"
+version="${file.jarVersion}"
+displayName="Coordosy"
+license="MIT"
+issueTrackerURL="github.com/bookking3000/Coordosy/issues"
+description='''
+A Minecraft Mod indicating the Direction to another Player
+'''
