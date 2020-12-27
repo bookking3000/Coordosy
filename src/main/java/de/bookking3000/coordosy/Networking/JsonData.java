@@ -15,6 +15,7 @@ public class JsonData {
     public String listString;
     transient List<Entity> entityList;
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (this == obj) return true;
@@ -25,6 +26,11 @@ public class JsonData {
                 (this.z == ((JsonData) obj).z) &&
                 (this.lookVector.equals(((JsonData) obj).lookVector)) &&
                 (this.uuid.equals(((JsonData) obj).uuid));
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
 

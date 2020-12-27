@@ -33,7 +33,7 @@ public class CoordosyConfig {
     private static void setupBasicConfig() {
 
         AGGRESSIVE_MODE = CLIENT_BUILDER.comment("True if Coordosy shall scan for other Players in Minecraft itself (High CPU Load!), False means only sending Data to API-Endpoint")
-                .define("aggresiveMode", false);
+                .define("aggressiveMode", false);
 
         API_ENDPOINT = CLIENT_BUILDER.comment("API-Endpoint")
                 .define("apiEndpoint", "http://coordosy-api.ixtomix.codes/");
