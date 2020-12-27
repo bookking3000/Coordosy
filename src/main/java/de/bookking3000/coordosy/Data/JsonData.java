@@ -1,4 +1,4 @@
-package de.bookking3000.coordosy.Networking;
+package de.bookking3000.coordosy.Data;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.vector.Vector3d;
@@ -13,7 +13,7 @@ public class JsonData {
     public double z;
 
     public String listString;
-    transient List<Entity> entityList;
+    transient public List<Entity> entityList;
 
     @Override
     public boolean equals(Object obj) {

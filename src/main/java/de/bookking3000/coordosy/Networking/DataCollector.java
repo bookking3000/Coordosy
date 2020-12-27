@@ -3,6 +3,7 @@ package de.bookking3000.coordosy.Networking;
 import com.google.gson.Gson;
 import de.bookking3000.coordosy.Configuration.CoordosyConfig;
 import de.bookking3000.coordosy.Coordosy;
+import de.bookking3000.coordosy.Data.JsonData;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,7 +56,7 @@ public class DataCollector extends Thread {
                 data.listString = data.entityList.stream().map(Object::toString)
                         .collect(Collectors.joining(", "));
             } else
-                data.listString = Coordosy.MODID + " is configured to be non-aggresive in your Client-Config.";
+                data.listString = Coordosy.MODID + " is configured to be non-aggressive in your Client-Config.";
 
             HttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost post = new HttpPost(postUrl);
