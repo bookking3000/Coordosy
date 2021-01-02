@@ -15,6 +15,9 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Mod(Coordosy.MODID)
 public class Coordosy {
 
@@ -31,39 +34,43 @@ public class Coordosy {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CoordosyConfig.CLIENT_CONFIG);
         CoordosyConfig.loadConfig(CoordosyConfig.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve("coordosy-client.toml"));
-
-      /* Too lazy... :D
-      ModLoadingContext.get().registerExtensionPoint(
-                ExtensionPoint.CONFIGGUIFACTORY,
-                () -> (mc, screen) -> new ConfigurationGUI()
-        );*/
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        LOGGER.info(MODID + " " + VERSION + " " + "successfully loaded");
+        LOGGER.info(MODID + " " + VERSION + " " + " loaded");
     }
 
     @SubscribeEvent
     public void onUpdate(TickEvent.PlayerTickEvent event) {
-        if (ticks != (CoordosyConfig.TICKS_BETWEEN_CHECK.get())) { //Every 5 Seconds
+        if (ticks != (CoordosyConfig.TICKS_BETWEEN_CHECK.get()))
+        {
             ticks++;
             return;
         }
         ticks = 0;
 
-        if (minecraft.isSingleplayer()) {
+        if (minecraft.player == null)
+        {
             return;
         }
-        if (minecraft.player != event.player) {
+        if (minecraft.isSingleplayer())
+        {
             return;
         }
-        if (minecraft.player == null) {
+        if (minecraft.player != event.player)
+        {
             return;
         }
-        try {
-            DataCollector dataCollector = new DataCollector(minecraft.player);
-            dataCollector.start();
-        } catch (Exception e) {
+
+        try
+        {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(() -> {
+                DataCollector dataCollector = new DataCollector(minecraft.player);
+                dataCollector.run();
+            });
+        } catch (Exception e)
+        {
             LOGGER.error(e.getMessage());
         }
     }

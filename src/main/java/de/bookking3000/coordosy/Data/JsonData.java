@@ -1,9 +1,6 @@
 package de.bookking3000.coordosy.Data;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.vector.Vector3d;
-
-import java.util.List;
 
 public class JsonData {
     public Vector3d lookVector;
@@ -12,8 +9,12 @@ public class JsonData {
     public double y;
     public double z;
 
-    public String listString;
-    transient public List<Entity> entityList;
+    public String entityListString;
+    public String MpGroupId;
+
+    public JsonData(String mpGroupId) {
+        MpGroupId = mpGroupId;
+    }
 
     @Override
     public boolean equals(Object obj) {

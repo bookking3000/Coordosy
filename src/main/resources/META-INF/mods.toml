@@ -7,6 +7,4 @@ version="${file.jarVersion}"
 displayName="Coordosy"
 license="MIT"
 issueTrackerURL="github.com/bookking3000/Coordosy/issues"
-description='''
-A Minecraft Mod indicating the Direction to another Player
-'''
+description="A Minecraft Mod indicating the Direction to your Mates"
