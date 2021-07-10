@@ -1,7 +1,7 @@
-package de.bookking3000.coordosy;
+package de.ixtomix.coordosy;
 
-import de.bookking3000.coordosy.Configuration.CoordosyConfig;
-import de.bookking3000.coordosy.Networking.DataCollector;
+import de.ixtomix.coordosy.Configuration.CoordosyConfig;
+import de.ixtomix.coordosy.Networking.DataCollector;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
