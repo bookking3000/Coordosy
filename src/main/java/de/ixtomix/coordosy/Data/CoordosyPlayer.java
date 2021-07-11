@@ -1,16 +1,33 @@
 package de.ixtomix.coordosy.Data;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import de.ixtomix.coordosy.Annotations.HiddenInJson;
+import de.ixtomix.coordosy.Excludors.HiddenInJsonExclusionStrategy;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class CoordosyPlayer {
-    public Vector3d lookVector;
+
+    @HiddenInJson
     public String uuid;
+
+    @HiddenInJson
+    public String MpGroupId;
+
+    @HiddenInJson
+    public CoordosyPlayerLookVector lookVector;
+
+    @Expose
     public double x;
+
+    @Expose
     public double y;
+
+    @Expose
     public double z;
 
+    @Expose
     public String entityListString;
-    public String MpGroupId;
 
     public CoordosyPlayer(String MpGroupId, String uuid) {
         this.MpGroupId = MpGroupId;
@@ -37,12 +54,18 @@ public class CoordosyPlayer {
 
     @Override
     public String toString() {
-        return "CoordosyPlayer{" +
+        return "" + uuid + "{" +
                 "lookVector=" + lookVector +
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +
                 '}';
+    }
+
+    public String toJson() {
+        GsonBuilder gson = new GsonBuilder();
+        gson.excludeFieldsWithoutExposeAnnotation();
+        return gson.setExclusionStrategies(new HiddenInJsonExclusionStrategy()).create().toJson(this);
     }
 }
 

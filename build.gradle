@@ -74,11 +74,6 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.4-35.1.4'
-    implementation 'com.google.firebase:firebase-admin:8.0.0'
-}
-
 jar {
     manifest {
         attributes([
@@ -93,17 +88,35 @@ jar {
     }
 }
 
-jar.finalizedBy('reobfJar')
+configurations { packageLibs }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.4-35.1.4'
+    testCompile('org.junit.jupiter:junit-jupiter:5.4.2')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'dev'
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+// build a dependency jar
+task depJar(type: Jar) {
+    from processResources
+    classifier = 'deps'
+}
+
+artifacts {
+    archives sourceJar
+    archives deobfJar
+    archives depJar
 }

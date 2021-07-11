@@ -15,9 +15,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 @Mod(Coordosy.MODID)
 public class Coordosy {
 
@@ -64,12 +61,12 @@ public class Coordosy {
 
         try
         {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(() -> {
+            new Thread(() -> {
                 DataCollector dataCollector = new DataCollector(minecraft.player);
                 dataCollector.run();
-            });
-        } catch (Exception e)
+            }).start();
+        }
+        catch (Exception e)
         {
             LOGGER.error(e.getMessage());
         }
