@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import de.ixtomix.coordosy.Annotations.HiddenInJson;
 import de.ixtomix.coordosy.Excludors.HiddenInJsonExclusionStrategy;
-import net.minecraft.util.math.vector.Vector3d;
 
 public class CoordosyPlayer {
 
@@ -13,6 +12,9 @@ public class CoordosyPlayer {
 
     @HiddenInJson
     public String MpGroupId;
+
+    @HiddenInJson
+    public String worldName;
 
     @HiddenInJson
     public CoordosyPlayerLookVector lookVector;
@@ -25,9 +27,6 @@ public class CoordosyPlayer {
 
     @Expose
     public double z;
-
-    @Expose
-    public String entityListString;
 
     public CoordosyPlayer(String MpGroupId, String uuid) {
         this.MpGroupId = MpGroupId;

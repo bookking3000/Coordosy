@@ -1,11 +1,12 @@
 package de.ixtomix.coordosy.Data;
 
 import com.google.gson.GsonBuilder;
-import net.minecraft.util.math.vector.Vector3d;
+import com.mojang.math.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class CoordosyPlayerLookVector extends Vector3d {
 
-    public CoordosyPlayerLookVector(Vector3d vec) {
+    public CoordosyPlayerLookVector(Vec3 vec) {
         super(vec.x, vec.y, vec.z);
     }
 

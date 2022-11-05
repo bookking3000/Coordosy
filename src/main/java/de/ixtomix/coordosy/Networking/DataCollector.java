@@ -4,41 +4,40 @@ import de.ixtomix.coordosy.Configuration.CoordosyConfig;
 import de.ixtomix.coordosy.Coordosy;
 import de.ixtomix.coordosy.Data.CoordosyPlayer;
 import de.ixtomix.coordosy.Data.CoordosyPlayerLookVector;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DataCollector {
 
-    ClientPlayerEntity clientPlayerEntity;
-    List<Entity> entityList;
+    Player player;
 
-    public DataCollector(ClientPlayerEntity clientPlayerEntity) {
-        this.clientPlayerEntity = clientPlayerEntity;
+    List<? extends Player> entityList;
+
+    public DataCollector(Player player) {
+        this.player = player;
     }
 
     public void run() {
 
         CoordosyPlayer coordosyPlayer = new CoordosyPlayer(
                 CoordosyConfig.MP_GROUP_ID.get(),
-                String.valueOf(clientPlayerEntity.getUniqueID())
+                player.getStringUUID()
         );
 
-        ClientPlayerEntity clientPlayerEntity = this.clientPlayerEntity;
+        coordosyPlayer.x = this.player.getX();
+        coordosyPlayer.y = this.player.getY();
+        coordosyPlayer.z = this.player.getZ();
+        coordosyPlayer.lookVector = new CoordosyPlayerLookVector(this.player.getLookAngle());
+        coordosyPlayer.worldName = getWorldName();
 
-        coordosyPlayer.x = clientPlayerEntity.getPosX();
-        coordosyPlayer.y = clientPlayerEntity.getPosY();
-        coordosyPlayer.z = clientPlayerEntity.getPosZ();
-        coordosyPlayer.lookVector = new CoordosyPlayerLookVector(clientPlayerEntity.getLookVec());
 
-        if (clientPlayerEntity.isAlive() && clientPlayerEntity.isUser()) {
+        if (this.player.isAlive()) {
             if (CoordosyConfig.AGGRESSIVE_MODE.get()) {
-                populateEntityList(clientPlayerEntity, coordosyPlayer);
+                populateEntityList(this.player);
             }
 
             try {
@@ -50,38 +49,72 @@ public class DataCollector {
         }
     }
 
-    private void populateEntityList(ClientPlayerEntity clientPlayerEntity, CoordosyPlayer coordosyPlayer) {
-        int bbExpansion = CoordosyConfig.BOUNDING_BOX_RANGE_EXPANSION.get();
+    public void clear() {
 
-        AxisAlignedBB alignedBB = clientPlayerEntity.getBoundingBox().grow(bbExpansion);
-
-        entityList = clientPlayerEntity.world.getEntitiesWithinAABB(RemoteClientPlayerEntity.class, alignedBB);
-
-        entityList.removeIf(
-                e -> e.equals(clientPlayerEntity)
+        CoordosyPlayer coordosyPlayer = new CoordosyPlayer(
+                CoordosyConfig.MP_GROUP_ID.get(),
+                player.getStringUUID()
         );
 
-        coordosyPlayer.entityListString = entityList.stream()
-                .map(Entity::toString)
-                .collect(Collectors.joining(", "));
+        coordosyPlayer.worldName = getWorldName();
 
+        try {
+            clearCoordinatesFromRealtimeDatabase(coordosyPlayer);
+        } catch (IOException e) {
+            Coordosy.LOGGER.error(e);
+        }
     }
+
+    @NotNull
+    private String getWorldName() {
+        String worldName;
+        if (Minecraft.getInstance().getCurrentServer() != null) {
+            worldName = String.valueOf(Minecraft.getInstance().getCurrentServer().ip.hashCode());
+        } else {
+            Coordosy.LOGGER.debug("You are tracked in Single-Player mode, which is usually only used in development environments.");
+            worldName = player.getStringUUID() + "-sp";
+        }
+        return worldName;
+    }
+
+    private void populateEntityList(Player clientPlayer) {
+
+        entityList = clientPlayer.getLevel().players();
+        entityList.removeIf(
+                e -> e.equals(clientPlayer)
+        );
+
+        //Coordosy.LOGGER.debug("eL: " + Arrays.toString(entityList.toArray()));
+    }
+
 
     private void sendCoordinatesToRealtimeDatabase(CoordosyPlayer coordosyPlayer) throws IOException {
 
         String groupId = CoordosyConfig.MP_GROUP_ID.get();
+        String world = coordosyPlayer.worldName;
         String uuid = coordosyPlayer.uuid;
 
-        try
-        {
-            new CURL().patch(CoordosyConfig.API_ENDPOINT.get() + groupId + "/users/" + uuid + "/position.json", coordosyPlayer.toJson());
-            new CURL().patch(CoordosyConfig.API_ENDPOINT.get() + groupId + "/users/" + uuid + "/lookVector.json", coordosyPlayer.lookVector.toJson());
-        }
-        catch (Exception e)
-        {
+        try {
+            new CURL().patch(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + world + "/users/" + uuid + "/position.json", coordosyPlayer.toJson());
+            new CURL().patch(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + world + "/users/" + uuid + "/lookVector.json", coordosyPlayer.lookVector.toJson());
+        } catch (Exception e) {
             Coordosy.LOGGER.error(e);
         }
 
+    }
+
+    private void clearCoordinatesFromRealtimeDatabase(CoordosyPlayer coordosyPlayer) throws IOException {
+
+        String groupId = CoordosyConfig.MP_GROUP_ID.get();
+        String world = coordosyPlayer.worldName;
+        String uuid = coordosyPlayer.uuid;
+
+        try {
+            new CURL().delete(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + "/users/" + world + "/" + uuid + "/position.json");
+            new CURL().delete(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + "/users/" + world + "/" + uuid + "/lookVector.json");
+        } catch (Exception e) {
+            Coordosy.LOGGER.error(e);
+        }
 
     }
 

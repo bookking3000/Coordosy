@@ -18,7 +18,11 @@ public class CoordosyConfig {
     public static ForgeConfigSpec.ConfigValue<String> API_ENDPOINT;
     public static ForgeConfigSpec.BooleanValue AGGRESSIVE_MODE;
     public static ForgeConfigSpec.IntValue TICKS_BETWEEN_CHECK;
-    public static ForgeConfigSpec.IntValue BOUNDING_BOX_RANGE_EXPANSION;
+
+    /**
+     * @deprecated
+     */
+    public static ForgeConfigSpec.DoubleValue BOUNDING_BOX_RANGE_EXPANSION;
 
     public static ForgeConfigSpec.ConfigValue<String> MP_GROUP_ID;
 
@@ -38,26 +42,23 @@ public class CoordosyConfig {
 
     private static void setupBasicConfig() {
 
-        AGGRESSIVE_MODE = CLIENT_BUILDER.comment("true if Coordosy shall scan for other Players in Minecraft itself, false means only sending your own Coordinates to API-Endpoint")
+        AGGRESSIVE_MODE = CLIENT_BUILDER.comment("true if Coordosy shall scan for other Players in Minecraft itself, false means only sending your own Coordinates to API-Endpoint. It currently is not properly implemented, so let it stay on false")
                 .define("aggressiveMode", false);
 
-        API_ENDPOINT = CLIENT_BUILDER.comment("API-Endpoint (You'll probably won't change that)")
+        //Todo Move away from Google RealtimeDB. Maybe RethinkDB is the way to go.
+        API_ENDPOINT = CLIENT_BUILDER.comment("API-Endpoint")
                 .define("apiEndpoint", "https://coordosy-default-rtdb.europe-west1.firebasedatabase.app");
 
         TICKS_BETWEEN_CHECK = CLIENT_BUILDER.comment("How many ticks should Coordosy wait between Requests")
                 .defineInRange("rqTicks", 20, 10, Integer.MAX_VALUE);
-
-        BOUNDING_BOX_RANGE_EXPANSION = CLIENT_BUILDER.comment("The radius Coordosy is Scanning for Players in Aggressive Mode")
-                .defineInRange("boundingBoxExp", 50, 25, Integer.MAX_VALUE);
 
         CLIENT_BUILDER.pop();
     }
 
     private static void setupMultiplayerConfig() {
 
-        MP_GROUP_ID = CLIENT_BUILDER.comment("Group-ID - The Developer of this Plugin, will tell this to you, to prevent misuse ;)")
-                .define("mpGroupId", "");
-
+        MP_GROUP_ID = CLIENT_BUILDER.comment("Group-ID - The Developer of this Plugin, will tell this to you, to prevent misuse ;) (just contact me (Ixtomix#2313) on my Discord https://discord.gg/eYjv7Ys9fJ)")
+                .define("mpGroupId", "coordosy-default");
 
         CLIENT_BUILDER.pop();
     }

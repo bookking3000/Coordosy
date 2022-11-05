@@ -2,6 +2,7 @@ package de.ixtomix.coordosy.Networking;
 
 import de.ixtomix.coordosy.Coordosy;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -28,12 +29,29 @@ public class CURL {
 
         Coordosy.LOGGER.debug("Response (" + statusCode + "): " + response);
 
-        try
-        {
+        try {
             httpClient.close();
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
+            Coordosy.LOGGER.error(e.getMessage());
+        }
+
+    }
+
+    public void delete(String Url) throws Exception {
+        URL obj = new URL(Url);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpDelete httpDelete = new HttpDelete(obj.toURI());
+        HttpResponse response = httpClient.execute(httpDelete);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        Coordosy.LOGGER.debug("Response (" + statusCode + "): " + response);
+
+        try {
+            httpClient.close();
+        }
+        catch (IOException e) {
             Coordosy.LOGGER.error(e.getMessage());
         }
 
