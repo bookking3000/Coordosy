@@ -64,8 +64,7 @@ public class Coordosy {
         }
 
         if (minecraft.hasSingleplayerServer()) {
-            LOGGER.info(MODID + " " + VERSION + " " + " Exited: Not in Multiplayer");
-            //return;
+            return;
         }
 
         if (minecraft.player != event.player) {
