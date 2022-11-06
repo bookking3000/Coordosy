@@ -1,5 +1,7 @@
 package de.ixtomix.coordosy.Networking;
 
+import com.rethinkdb.RethinkDB;
+import com.rethinkdb.net.Connection;
 import de.ixtomix.coordosy.Configuration.CoordosyConfig;
 import de.ixtomix.coordosy.Coordosy;
 import de.ixtomix.coordosy.Data.CoordosyPlayer;
@@ -11,15 +13,20 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+//Todo Naming
 public class DataCollector {
 
     Player player;
 
     List<? extends Player> entityList;
 
+    public static final RethinkDB r = RethinkDB.r;
+
     public DataCollector(Player player) {
         this.player = player;
     }
+
+    Connection conn = r.connection().user(CoordosyConfig.RETHINKDB_USER.get()).hostname(CoordosyConfig.RETHINKDB_HOST.get()).port(28015).connect();
 
     public void run() {
 
@@ -84,19 +91,14 @@ public class DataCollector {
                 e -> e.equals(clientPlayer)
         );
 
-        //Coordosy.LOGGER.debug("eL: " + Arrays.toString(entityList.toArray()));
     }
-
 
     private void sendCoordinatesToRealtimeDatabase(CoordosyPlayer coordosyPlayer) throws IOException {
 
         String groupId = CoordosyConfig.MP_GROUP_ID.get();
-        String world = coordosyPlayer.worldName;
-        String uuid = coordosyPlayer.uuid;
 
         try {
-            new CURL().patch(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + world + "/users/" + uuid + "/position.json", coordosyPlayer.toJson());
-            new CURL().patch(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + world + "/users/" + uuid + "/lookVector.json", coordosyPlayer.lookVector.toJson());
+            r.db("coordosy-" + groupId).table("users").insert(r.json(coordosyPlayer.toJson())).optArg("conflict", "update").run(conn);
         } catch (Exception e) {
             Coordosy.LOGGER.error(e);
         }
@@ -106,12 +108,9 @@ public class DataCollector {
     private void clearCoordinatesFromRealtimeDatabase(CoordosyPlayer coordosyPlayer) throws IOException {
 
         String groupId = CoordosyConfig.MP_GROUP_ID.get();
-        String world = coordosyPlayer.worldName;
-        String uuid = coordosyPlayer.uuid;
 
         try {
-            new CURL().delete(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + "/users/" + world + "/" + uuid + "/position.json");
-            new CURL().delete(CoordosyConfig.API_ENDPOINT.get() + "/" + groupId + "/users/" + world + "/" + uuid + "/lookVector.json");
+            r.db("coordosy-" + groupId).table("users").get(coordosyPlayer.uuid).delete().run(conn);
         } catch (Exception e) {
             Coordosy.LOGGER.error(e);
         }

@@ -7,13 +7,13 @@ import de.ixtomix.coordosy.Excludors.HiddenInJsonExclusionStrategy;
 
 public class CoordosyPlayer {
 
-    @HiddenInJson
+    @Expose
     public String uuid;
 
     @HiddenInJson
     public String MpGroupId;
 
-    @HiddenInJson
+    @Expose
     public String worldName;
 
     @HiddenInJson

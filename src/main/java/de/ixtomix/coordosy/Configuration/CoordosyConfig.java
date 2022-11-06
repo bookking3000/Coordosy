@@ -15,13 +15,15 @@ public class CoordosyConfig {
     private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
     public static ForgeConfigSpec CLIENT_CONFIG;
 
-    public static ForgeConfigSpec.ConfigValue<String> API_ENDPOINT;
+    public static ForgeConfigSpec.ConfigValue<String> RETHINKDB_HOST;
+    public static ForgeConfigSpec.ConfigValue<String> RETHINKDB_USER;
     public static ForgeConfigSpec.BooleanValue AGGRESSIVE_MODE;
     public static ForgeConfigSpec.IntValue TICKS_BETWEEN_CHECK;
 
     /**
      * @deprecated
      */
+    @Deprecated
     public static ForgeConfigSpec.DoubleValue BOUNDING_BOX_RANGE_EXPANSION;
 
     public static ForgeConfigSpec.ConfigValue<String> MP_GROUP_ID;
@@ -45,9 +47,11 @@ public class CoordosyConfig {
         AGGRESSIVE_MODE = CLIENT_BUILDER.comment("true if Coordosy shall scan for other Players in Minecraft itself, false means only sending your own Coordinates to API-Endpoint. It currently is not properly implemented, so let it stay on false")
                 .define("aggressiveMode", false);
 
-        //Todo Move away from Google RealtimeDB. Maybe RethinkDB is the way to go.
-        API_ENDPOINT = CLIENT_BUILDER.comment("API-Endpoint")
-                .define("apiEndpoint", "https://coordosy-default-rtdb.europe-west1.firebasedatabase.app");
+        RETHINKDB_HOST = CLIENT_BUILDER.comment("RethinkDB-Host")
+                .define("rtDbHost", "94.16.107.181");
+
+        RETHINKDB_USER = CLIENT_BUILDER.comment("RethinkDB-User")
+                .define("rtDbUser", "coordosy");
 
         TICKS_BETWEEN_CHECK = CLIENT_BUILDER.comment("How many ticks should Coordosy wait between Requests")
                 .defineInRange("rqTicks", 20, 10, Integer.MAX_VALUE);
